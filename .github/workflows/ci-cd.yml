@@ -79,13 +79,13 @@ jobs:
               http://${{ secrets.EC2_PUBLIC_IP }}/nginx-health)
             echo "Código HTTP recibido: $HTTP_CODE"
             if [ "$HTTP_CODE" = "200" ]; then
-              echo "✅ Health check PASADO — HTTP 200 OK"
+              echo "Health check PASADO — HTTP 200 OK"
               exit 0
             fi
-            echo "⏳ No disponible aún, esperando 10s..."
+            echo "No disponible aún, esperando 10s..."
             sleep 10
           done
-          echo "❌ Health check FALLIDO"
+          echo "Health check FALLIDO"
           exit 1
 
       - name: "★ Prueba de Latencia — tiempo de respuesta HTTP"
@@ -99,9 +99,9 @@ jobs:
           LATENCIA_MS=$(echo "$LATENCIA * 1000" | bc | cut -d'.' -f1)
           echo "Latencia en ms: ${LATENCIA_MS}ms"
           if [ "$LATENCIA_MS" -lt 5000 ]; then
-            echo "✅ Latencia ACEPTABLE"
+            echo "Latencia ACEPTABLE"
           else
-            echo "⚠️  Latencia ALTA"
+            echo "Latencia ALTA"
           fi
 
       - name: "★ Validación de Puerto 80 accesible"
@@ -111,9 +111,9 @@ jobs:
           echo " Target : ${{ secrets.EC2_PUBLIC_IP }}:80"
           echo "=========================================="
           if timeout 10 bash -c "echo > /dev/tcp/${{ secrets.EC2_PUBLIC_IP }}/80" 2>/dev/null; then
-            echo "✅ Puerto 80 ABIERTO y accesible"
+            echo "Puerto 80 ABIERTO y accesible"
           else
-            echo "❌ Puerto 80 NO accesible"
+            echo "Puerto 80 NO accesible"
             exit 1
           fi
 
@@ -144,7 +144,7 @@ jobs:
             --force-new-deployment \
             --query "service.{status:status, deployments:length(deployments)}" \
             --output table
-          echo "✅ Deploy unificado iniciado en ECS"
+          echo "Deploy unificado iniciado en ECS"
 
       - name: "Verificar estabilidad del cluster ECS"
         run: |
@@ -152,4 +152,4 @@ jobs:
           aws ecs wait services-stable \
             --cluster ${{ secrets.ECS_CLUSTER }} \
             --services netmonitor-unified-svc
-          echo "✅ Servicio ECS estable y corriendo"
+          echo "Servicio ECS estable y corriendo"
